@@ -1,0 +1,1208 @@
+/* =========================================================
+   DIGITAL ECOLOGIES — GRITTY / VINTAGE / INDUSTRIAL THEME
+   (No paths like /images — textures are filenames only)
+   ========================================================= */
+
+/* ===== Palette & knobs ===== */
+:root{
+  --ink:#101417;
+  --charcoal:#1d1f20;
+  --paper:#e7e0d2;
+  --paper-dark:#d5ccb9;
+  --moss:#5b6a55;
+  --rust:#b24a3b;
+  --steel:#3b474f;
+  --accent:#7e8f80;
+  --page-w: 650px;  /* +8% from 550 */
+  --page-h: 735px;  /* +8% from 635 */
+  
+  /* viewport caps for responsive book sizing */
+  --book-vw-cap: 98vw;  /* was effectively 92vw via media rule */
+  --book-vh-cap: 92vh;  /* new: prevents vertical overflow */
+
+
+  /* page size (each page) */
+  --page-w: 550px;
+  --page-h: 635px;
+  --spread-aspect: 0.5773; /* 635 / (550*2) */
+
+  /* leather accents (kept for inner paper look & optional effects) */
+  --leather: #5b3c28;
+  --leather-deep: #3b2618;
+  --leather-warm: #7a563f;
+  --moss-olive: #6b7d4f;
+  --mold-speck: rgba(66,84,54,.22);
+  --leather1:#41281b; --leather2:#5c3a2a; --leather3:#7a5641;
+  --brass:#a88432; --brass-hi:#d6b455; --brass-lo:#533e17;
+
+  /* spacing */
+  --padX: 72px;
+  --padY: 56px;
+
+  /* abstract layout */
+  --abs-left-width: 220px;
+  --abs-gap: 14px;
+  --abs-pad-left: 44px;
+  --abs-pad-right: 38px;
+  --abs-img: 74%;
+  --abs-art-shift: 6px;
+  --abs-title-size: 18px;
+  --abs-body-size: 17px;
+  --abs-body-leading: 1.42;
+  --abs-text-measure: 360px;
+}
+
+/* ===== Reset-ish ===== */
+*{ box-sizing:border-box; margin:0; padding:0; }
+img{ max-width:100%; display:block; }
+
+/* ===== Desk/Tabletop background (gritty) ===== */
+body{
+  height:100vh; width:100vw; overflow:hidden;
+  display:grid; place-content:center;
+  color:var(--ink);
+  background-image:url("new-background.png");
+  background-position:center center; background-size:cover; background-repeat:no-repeat; background-attachment:fixed;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image: url("tabletop-grit.png");
+  background-size: 900px 900px;
+  background-repeat: repeat;
+  opacity:.25; mix-blend-mode:multiply;
+}
+body::after{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.05"/></svg>');
+  mix-blend-mode:multiply;
+}
+
+/* ===== Book container ===== */
+.book-wrap{
+  position:relative;
+  width: calc(var(--page-w) * 2);
+  height: var(--page-h);
+  perspective:1800px; z-index:1;
+}
+.book-wrap::before{
+  content:""; position:absolute; left:-3%; right:-3%; top:50%; height:86%;
+  transform:translateY(-50%);
+  background:radial-gradient(ellipse at 50% 50%, rgba(0,0,0,.35) 0%, rgba(0,0,0,.18) 36%, rgba(0,0,0,.1) 66%, transparent 92%);
+  filter:blur(24px);
+}
+.flipbook{ position:relative; width:100%; height:100%; }
+
+/* ===== HARD PAGES (covers) — image-mapped & exact fit ===== */
+.hard.front-cover{
+  background-image:url("flipbook_cover.png");
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:100% 100%; /* exact fit to 550x635 page */
+}
+
+.hard.inner-front{
+  background: url("book-cover-leather-inner-front.png") center / 100% 100% no-repeat;
+}
+
+.hard.inner-back{
+  background: url("book-cover-leather-inner-back.png") center / 100% 100% no-repeat;
+}
+
+.hard.back-cover{
+  background: url("flipbook_back_cover.png") center / cover no-repeat !important;
+}
+
+/* keep nice rounded paper edge + physical shadow */
+.flipbook .page.hard{
+  border:none; border-radius:12px; overflow:hidden;
+  color:#eee7d8;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    inset 8px 10px 30px rgba(0,0,0,.22),
+    inset -12px -14px 36px rgba(0,0,0,.35),
+    0 18px 40px rgba(0,0,0,.42);
+  position:relative;
+}
+
+/* inner deboss frame (subtle) */
+.flipbook .page.hard::before{
+  content:""; position:absolute; inset:16px; border-radius:9px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.10),
+    inset 0 0 0 2px rgba(0,0,0,.25),
+    inset 0 0 28px rgba(0,0,0,.18);
+  pointer-events:none;
+}
+
+/* spine edge highlight */
+.flipbook .page.hard::after{
+  content:""; position:absolute; top:3%; bottom:3%; width:10px; right:-6px;
+  background:linear-gradient(180deg, var(--leather-deep), var(--leather));
+  border-radius:0 9px 9px 0;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12), 3px 0 8px rgba(0,0,0,.28);
+  pointer-events:none;
+}
+.flipbook .page.hard:last-child::after,
+.flipbook .page.hard:nth-last-child(2)::after{
+  left:-6px; right:auto; border-radius:9px 0 0 9px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12), -3px 0 8px rgba(0,0,0,.28);
+}
+
+/* Hide the HTML title block on outer covers (art already has it) */
+.hard.front-cover .cover-inner,
+.hard.back-cover  .cover-inner{ display:none; }
+
+/* ===== Cover content ===== */
+.cover-inner{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:10px; text-align:center; width:100%; height:100%;
+  padding: var(--padY) var(--padX);
+}
+.cover-title{
+  font-family:"Oswald", system-ui, sans-serif;
+  font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  font-size:38px; line-height:1.02;
+  color:#efe9d5;
+  text-shadow: 0 1px 0 rgba(0,0,0,.6), 0 0 40px rgba(0,0,0,.35);
+}
+.cover-sub, .cover-editor{
+  font-family:"IBM Plex Serif", serif;
+  font-size:16px; letter-spacing:.04em; color:#e9e2cf;
+  opacity:.95;
+}
+.cover-stamp{
+  width:120px; height:120px; margin-bottom:10px; opacity:.9;
+  background-image:url("flipbook-cover-stamp.png");
+  background-size:contain; background-repeat:no-repeat; background-position:center;
+  filter: contrast(1.05) saturate(.9) drop-shadow(0 2px 2px rgba(0,0,0,.35));
+}
+
+/* ===== Paper pages ===== */
+.flipbook .page:not(.hard){
+  position:relative;
+  background:
+    radial-gradient(140% 100% at 50% 10%, rgba(0,0,0,.05), rgba(0,0,0,0) 55%),
+    radial-gradient(120% 140% at 10% 50%, rgba(0,0,0,.06), transparent 60%),
+    radial-gradient(120% 140% at 90% 50%, rgba(0,0,0,.06), transparent 60%),
+    var(--paper);
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:6px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.35),
+              0 10px 22px rgba(0,0,0,.24);
+  display:flex; align-items:center; justify-content:center; padding:0;
+  overflow:hidden;
+  color:var(--charcoal);
+}
+.flipbook .page:not(.hard)::after{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.95;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.02)),
+    url("paper-fiber.png");
+  background-size:cover;
+  mix-blend-mode:multiply;
+}
+.flipbook .page:not(.hard).even::before,
+.flipbook .page:not(.hard).odd::before{
+  content:""; position:absolute; top:0; bottom:0; width:46px; pointer-events:none; z-index:2;
+}
+.flipbook .page:not(.hard).even::before{ right:-1px; background:linear-gradient(90deg, rgba(0,0,0,.22), rgba(0,0,0,.12) 26%, rgba(0,0,0,.06) 60%, transparent 100%); }
+.flipbook .page:not(.hard).odd::before{  left:-1px;  background:linear-gradient(270deg, rgba(0,0,0,.22), rgba(0,0,0,.12) 26%, rgba(0,0,0,.06) 60%, transparent 100%); }
+
+/* gentle deckled edge mask */
+.flipbook .page:not(.hard) {
+  -webkit-mask-image: radial-gradient(16px 16px at 6px 6px, #000 65%, transparent 70%),
+                      radial-gradient(16px 16px at calc(100% - 6px) 6px, #000 65%, transparent 70%),
+                      radial-gradient(16px 16px at 6px calc(100% - 6px), #000 65%, transparent 70%),
+                      radial-gradient(16px 16px at calc(100% - 6px) calc(100% - 6px), #000 65%, transparent 70%),
+                      linear-gradient(#000,#000);
+  -webkit-mask-composite: source-over, source-over, source-over, source-over, source-in;
+          mask-image: radial-gradient(16px 16px at 6px 6px, #000 65%, transparent 70%),
+                      radial-gradient(16px 16px at calc(100% - 6px) 6px, #000 65%, transparent 70%),
+                      radial-gradient(16px 16px at 6px calc(100% - 6px), #000 65%, transparent 70%),
+                      radial-gradient(16px 16px at calc(100% - 6px) calc(100% - 6px), #000 65%, transparent 70%),
+                      linear-gradient(#000,#000);
+}
+
+/* shared inner content wrapper */
+.conteudo{
+  position:relative;
+  width:100%; height:100%;
+  padding: var(--padY) var(--padX);
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-start;
+}
+
+/* generic figure */
+.placa{ width:76%; margin:0 auto; filter:contrast(1.03); }
+.fig{ display:block; text-align:center; font: 12px/1 "IBM Plex Serif", serif; color:#5a5245; margin-top:6px; }
+
+/* === Tighter page margins (content padding) === */
+.flipbook .page:not(.hard) .conteudo{
+  /* was var(--padY) var(--padX); */
+  padding: 18px 22px;
+}
+
+
+/* ===== Abstract (two-column) ===== */
+.abstract{ text-align:left; }
+.abs-grid{
+  display:grid;
+  grid-template-columns: var(--abs-left-width) minmax(0, 1fr);
+  gap: var(--abs-gap);
+  align-items: stretch;
+  height: 100%;
+  width:100%;
+}
+.abs-art{ display:flex; align-items:center; justify-content:center; }
+.abs-art img{ width: var(--abs-img); height: auto; object-fit:contain; transform: translateY(var(--abs-art-shift)); }
+.abs-text{ min-width:0; max-width: var(--abs-text-measure); padding-right:.5rem; }
+.abs-title{
+  font-family:"Oswald", system-ui, sans-serif;
+  font-weight:600; letter-spacing:.18em; text-transform:uppercase;
+  font-size: var(--abs-title-size); color:var(--steel);
+  margin: 2px 0 14px 0;
+}
+.abs-body{
+  font-family:"IBM Plex Serif", serif;
+  font-size: var(--abs-body-size);
+  line-height: var(--abs-body-leading);
+  color:#2a2723;
+}
+.abs-keys{
+  margin-top:16px;
+  font-family:"IBM Plex Serif", serif; font-size:17px; line-height:1.45; color:#2b352b;
+}
+.keys-label{ color:var(--moss); font-weight:600; letter-spacing:.02em; }
+
+/* Abstract right-side image sizing */
+.abs-side-figure{ margin:0; display:flex; align-items:flex-start; justify-content:center; }
+.abs-side-img{ width:100%; max-height:78%; object-fit:contain; }
+
+
+/* Abstract page 2 (left page tweaks) */
+.abstract--inner{ --abs-left-width: 120px; --abs-gap: 10px; --abs-pad-left: 28px; --abs-pad-right: 60px; }
+.abs-grid--left-page{ grid-template-columns: var(--abs-left-width) minmax(0, 1fr); }
+
+/* margin note */
+.margem{
+  position:absolute; right:8px; top:10px;
+  writing-mode:vertical-rl; text-orientation:mixed;
+  font:14px/1 "Oswald", system-ui, sans-serif; letter-spacing:.12em;
+  color:#7a6c58; opacity:.82; pointer-events:none;
+}
+
+/* Intro placeholder */
+.subtitulo{ text-transform:uppercase; letter-spacing:.15em; font:12px/1 "Oswald", system-ui, sans-serif; color:#6d5d4a; }
+.mono{ font:12px/1 "IBM Plex Serif", serif; color:#3a352e; }
+
+/* ===== Specimen styles ===== */
+.specimen1-page{ width:100%; height:100%; }
+.specimen1-figure{ position:relative; width:100%; height: calc(100% - 4px); display:flex; align-items:center; justify-content:center; }
+.specimen1-figure-img{ max-width:100%; height:auto; }
+#specimen1-hero{ transform: scale(1.12); transform-origin:center; }
+
+.specimen2-figure-img{ max-width:20%; height:auto; }
+
+.specimen1-meta{ margin:0 0 4px 0; }
+.specimen1-meta .specimen-id{
+  font-family:"Oswald", system-ui, sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#2e3336;
+}
+.specimen1-meta .specimen-title-line{
+  font-family:"IBM Plex Serif", serif; font-weight:600; font-size:18px; color:#1f1f1f;
+}
+
+.specimen1-facts{
+  margin:6px 0 12px 0;
+  border:1px solid rgba(0,0,0,.28);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.25), rgba(0,0,0,.03)),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.035) 0 1px, transparent 1px 22px),
+    #f3ebdb;
+  box-shadow:0 1px 2px rgba(0,0,0,.18), 0 0 0 1px rgba(255,255,255,.35) inset;
+  padding:10px 12px; position:relative;
+}
+.specimen1-facts .row{
+  display:grid; grid-template-columns:150px 1fr; gap:10px;
+  padding:6px 0; border-bottom:1px dashed rgba(0,0,0,.18);
+}
+.specimen1-facts .row:last-child{ border-bottom:none; }
+.specimen1-facts dt{
+  font-family:"Oswald", system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color:#323634;
+}
+.specimen1-facts dd{ margin:0; font-family:"IBM Plex Serif", serif; color:#1f1f1f; }
+
+/* tape highlight */
+.specimen1-facts.taped::before,
+.specimen1-facts.taped::after{
+  content:""; position:absolute; left:50%; transform: translateX(-50%) rotate(-2.2deg);
+  width: 160px; height: 18px; top: -10px; border-radius:2px; pointer-events:none;
+}
+.specimen1-facts.taped::before{
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,.58) 0%, rgba(245,245,245,.40) 45%, rgba(210,210,210,.26) 60%, rgba(255,255,255,.36) 100%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.08) 0 12px, rgba(0,0,0,.06) 12px 24px);
+  box-shadow: 0 2px 5px rgba(0,0,0,.20), inset 0 0 0 .75px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.35);
+  opacity:.78;
+}
+.specimen1-facts.taped::after{
+  background: linear-gradient( 70deg, rgba(255,255,255,.45) 0%, rgba(255,255,255,.12) 18%, rgba(255,255,255,0) 40%, rgba(255,255,255,.10) 60%, rgba(255,255,255,0) 80% );
+  opacity:.75;
+}
+
+/* body copy */
+.specimen1-prose{
+  font-family:"IBM Plex Serif", serif;
+  font-size:15px; line-height:1.46; color:#292521;
+  max-width:64ch;
+}
+.specimen1-prose p + p{ margin-top:.7rem; }
+.specimen1-desc-head{
+  font-family:"Oswald", system-ui, sans-serif; letter-spacing:.14em; text-transform:uppercase; font-size:14px; color:#1f1f1f; margin:0 0 8px 0;
+}
+.specimen1-credit .specimen1-desc-head{ margin-right:.5ch; }
+
+/* marker styles */
+.marker-circle{
+  position:relative; display:inline-block; padding: .02em .28em .06em .28em; margin: 0 .05em; z-index:0;
+}
+.marker-circle::before{
+  content:""; position:absolute; inset:-.18em -.38em; border: 2.5px solid var(--rust); border-radius:999px; transform: rotate(-2deg); filter: drop-shadow(0 0 .6px rgba(178,74,59,.55));
+}
+.marker-underline{ position:relative; display:inline; z-index:0; }
+.marker-underline::after{
+  content:""; position:absolute; left:-.06em; right:-.04em; height:.28em; bottom:-.1em;
+  border-bottom: 3px solid var(--rust); border-radius:2px; transform:rotate(-1.2deg);
+  background:linear-gradient(0deg, rgba(178,74,59,.12), rgba(178,74,59,.12)) padding-box;
+}
+
+
+/* === Specimen Spread Utilities (safe) === */
+.specimen-spread .conteudo{ display:flex; flex-direction:column; gap:10px; }
+
+.specimen-head{ margin-bottom:2px; z-index:3; }
+.specimen-id{
+  font-family:"Oswald", system-ui, sans-serif; letter-spacing:.14em;
+  text-transform:uppercase; color:#2e3336; font-size:12px;
+}
+.specimen-title{
+  font-family:"IBM Plex Serif", serif; font-weight:600; font-size:20px;
+  color:#1f1f1f; line-height:1.1; margin-top:2px;
+}
+
+.specimen-hero{
+  margin-top:6px; display:flex; align-items:center; justify-content:center;
+  min-height:50%; flex:1 1 auto;
+}
+.specimen-hero-img{ width:88%; height:auto; object-fit:contain; filter:contrast(1.03); }
+
+/* 'Documented by' pinned to bottom of left page */
+.doc-by{
+  margin-top:auto; padding-top:4px;
+  font-family:"IBM Plex Serif", serif; font-size:14px; color:#292521;
+}
+
+.notes-head{
+  font-family:"Oswald", system-ui, sans-serif; letter-spacing:.14em; text-transform:uppercase;
+  font-size:14px; color:#1f1f1f; margin:0 0 8px 0;
+}
+.specimen-notes{ max-width: none; padding:8px 14px; margin: 0;}
+.specimen-notes p{
+  font-family:"IBM Plex Serif", serif; font-size:14px; line-height:1.4; color:#292521;
+}
+.specimen-notes p {
+  margin-top: 0.4rem;   /* was ~1rem */
+  margin-bottom: 0.4rem;
+}
+
+/* === Field Notes: smaller, denser, wider === */
+.specimen-notes{
+  /* allow more horizontal room */
+  max-width: none;
+  /* smaller but readable; responsive across screens */
+  font-size: clamp(12.5px, 1.6vw, 13.5px);
+  line-height: 1.36;
+  padding-right: 4px;            /* reclaim a few px from the right */
+}
+.specimen-notes p{
+  font-size: inherit;
+  line-height: inherit;
+  margin: 0.45rem 0;             /* tighter paragraph spacing */
+}
+
+/* Free a few pixels for the taxonomy card below */
+.specimen-right .specimen-notes{ padding-bottom: 6px; }
+
+/* References-only smaller type (overrides the global !important body size) */
+.flipbook .page:not(.hard) .specimen-notes.refs{
+  font-size: 12px !important;   /* tweak: try 11.5–13px */
+  line-height: 1.32 !important; /* slightly tighter */
+}
+
+/* Tighten paragraph spacing for references */
+.flipbook .page:not(.hard) .specimen-notes.refs p{
+  margin: 0.25rem 0 !important; /* was ~0.4–0.45rem */
+}
+
+/* Contour-only taxonomy to match your dashed rows */
+.taxonomy-tag{
+  position:relative; background:transparent !important;
+  border:3px dashed rgba(109,88,62,.62);
+  border-radius:11px; padding:12px 14px; box-shadow:none !important;
+  transform: rotate(-.35deg);
+}
+.taxonomy-tag::before, .taxonomy-tag::after{ content:none !important; }
+.taxonomy--bottom{ align-self:stretch; }
+.taxonomy-grid .row{
+  display:grid; grid-template-columns:150px 1fr; gap:10px;
+  padding:8px 0; border-bottom:2px dashed rgba(109,88,62,.35);
+}
+.taxonomy-grid .row:last-child{ border-bottom:none; }
+.taxonomy-grid dt{
+  font-family:"Oswald", system-ui, sans-serif; letter-spacing:.08em;
+  text-transform:uppercase; color:#323634;
+}
+.taxonomy-grid dd{ margin:0; font-family:"IBM Plex Serif", serif; color:#1f1f1f; }
+
+/* === Taxonomy card: compact mode === */
+.taxonomy-tag{
+  border-width: 2px;             /* was 3px */
+  border-radius: 9px;            /* slightly tighter corners */
+  padding: 8px 10px;             /* was ~12–14px */
+  transform: rotate(-.2deg);     /* subtler tilt to save area */
+}
+
+/* rows: smaller type, tighter grid */
+.taxonomy-grid{
+  font-size: 13px;               /* global size for the card */
+}
+.taxonomy-grid .row{
+  grid-template-columns: 130px 1fr; /* was 150px label column */
+  gap: 8px;                         /* was 10px */
+  padding: 6px 0;                   /* was 8px 0 */
+  border-bottom: 1.5px dashed rgba(109,88,62,.35); /* was 2px */
+}
+.taxonomy-grid .row:last-child{ border-bottom: none; }
+
+/* labels & values */
+.taxonomy-grid dt{
+  font-size: 12px;               /* down from default */
+  letter-spacing: .06em;         /* slightly less spacing to save width */
+}
+.taxonomy-grid dd{
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+/* bottom placement still fills remaining space but with less air */
+.taxonomy--bottom{
+  margin-top: auto;
+  align-self: stretch;
+}
+
+/* ===== Responsive ===== */
+@media (max-width:1200px){
+  .book-wrap{
+    /* allow the book to occupy more of the viewport, but keep aspect and avoid overflow */
+    width:  min(var(--book-vw-cap), calc(var(--page-w) * 2));
+    height: min(calc(var(--book-vw-cap) * var(--spread-aspect)), var(--book-vh-cap));
+  }
+}
+
+  :root{ --abs-left-width: 180px; --abs-gap: 12px; }
+
+@media (max-width:900px){
+  .margem{ display:none; }
+  .abs-grid{ grid-template-columns:1fr; height:auto; }
+  .abs-art{ margin:0 auto 12px; }
+  .abs-body{ font-size:16.25px; line-height:1.44; }
+  .specimen1-facts .row{ grid-template-columns: 120px 1fr; }
+}
+
+/* ===== Print ===== */
+@media print{
+  body{ background:#fff; }
+  .flipbook .page{ box-shadow:none; border:none; }
+}
+
+/* ==== Make back cover darker to match the front ==== */
+.hard.back-cover{
+  background-image: url("flipbook_back_cover.png");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+.hard.back-cover::before{
+  content:"";
+  position:absolute; inset:0; pointer-events:none; border-radius:12px;
+  background:
+    linear-gradient(0deg, rgba(22,14,9,.22), rgba(22,14,9,.22)),
+    radial-gradient(120% 95% at 50% 60%, rgba(0,0,0,.35), transparent 60%),
+    linear-gradient(0deg, rgba(120,86,48,.10), rgba(120,86,48,.10));
+  mix-blend-mode:multiply;
+  opacity:1;
+}
+.hard.back-cover::after{
+  content:"";
+  position:absolute; inset:0; pointer-events:none; border-radius:12px;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.18"/></svg>');
+  background-size:300px 300px;
+  mix-blend-mode:multiply;
+  opacity:.9;
+}
+.hard.back-cover{ filter: contrast(1.08) saturate(.95); }
+:root{
+  --leather-target: #715027;
+  --leather-target-rgb: 113,80,39;
+  --tone-sat: 1.03;
+  --tone-ctr: 1.06;
+  --tone-bri: 0.98;
+  --tone-vignette: .34;
+}
+.hard.front-cover,
+.hard.back-cover{
+  position: relative;
+  background-size: 100% 100% !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  filter:
+    saturate(var(--tone-sat))
+    contrast(var(--tone-ctr))
+    brightness(var(--tone-bri));
+}
+.hard.front-cover::before,
+.hard.back-cover::before{
+  content:""; position:absolute; inset:0; pointer-events:none; border-radius:12px;
+  background:
+    linear-gradient(0deg, rgba(113,80,39,.10), rgba(113,80,39,.10)),
+    radial-gradient(115% 95% at 50% 58%, rgba(0,0,0,var(--tone-vignette)), transparent 60%);
+  mix-blend-mode:multiply;
+  opacity:1;
+}
+.hard.front-cover::after,
+.hard.back-cover::after{
+  content:""; position:absolute; inset:0; pointer-events:none; border-radius:12px;
+  background: rgba(var(--leather-target-rgb), .48);
+  mix-blend-mode:color;
+  opacity:1;
+}
+
+/* =================================WOODLOUSE ====================================================================*/
+/* ——— everything you already had above remains unchanged ——— */
+
+/* =================================WOODLOUSE ====================================================================*/
+.woodlouse{
+  position:absolute;
+  width:46px; height:46px;
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter: brightness(.88) contrast(.95) saturate(.9) drop-shadow(0 1px 1px rgba(0,0,0,.35));
+  opacity:.97;
+  will-change: transform, opacity, background-image;
+  transform-origin:50% 50%;
+}
+.woodlouse--despawn{ opacity:0; transition:opacity .25s ease; }
+@media (prefers-reduced-motion: reduce){
+  .woodlouse{ transition:none !important; }
+}
+
+/* ===================== APPENDED: PAGE VARIATION OVERLAYS (MASKS ONLY) ===================== */
+/* =========================================================
+   DIGITAL ECOLOGIES — GRITTY / VINTAGE / INDUSTRIAL THEME
+   (No paths like /images — textures are filenames only)
+   ========================================================= */
+
+/* ...[everything you already had above remains unchanged]... */
+
+/* Stamp & crease (used by JS) */
+.page-stamp{
+  position:absolute; right:18px; bottom:14px; z-index:6; pointer-events:none;
+  font: 11px/1.1 "Oswald", system-ui, sans-serif; letter-spacing:.18em; text-transform:uppercase;
+  color:#612; opacity:.6;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.35));
+  mix-blend-mode:multiply;
+  transform: rotate(-2.4deg);
+}
+
+/* === SAFETY PATCH ===
+   If .page-stamp is accidentally added to the page element itself,
+   neutralize positioning so the page doesn't go "misplaced". */
+.flipbook .page.page-stamp{
+  position: static !important;
+  inset: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+}
+
+/* OILY — smaller, scattered puddles */
+.fx--oily{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:4;
+  mix-blend-mode:multiply;
+
+  /* warm, translucent oil tint */
+  background: rgba(60, 44, 28, .95);
+  opacity: 0.28;
+
+  -webkit-mask-image:
+    /* roughen edges with turbulence */
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">  <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="12"/></filter>  <rect width="100%" height="100%" filter="url(%23n)"/></svg>'),
+
+    /* scattered small puddles */
+    radial-gradient(circle at 20% 22%, #000 0 10%, transparent 24%),
+    radial-gradient(ellipse 30% 20% at 68% 18%, #000 0 12%, transparent 28%),
+    radial-gradient(circle at 76% 64%, #000 0 9%, transparent 22%),
+    radial-gradient(ellipse 22% 28% at 32% 72%, #000 0 11%, transparent 26%),
+
+    /* tiny satellite drops */
+    radial-gradient(circle at 12% 42%, #000 0 5%, transparent 14%),
+    radial-gradient(circle at 48% 28%, #000 0 4%, transparent 12%),
+    radial-gradient(circle at 58% 82%, #000 0 5%, transparent 14%),
+    radial-gradient(circle at 84% 42%, #000 0 6%, transparent 15%);
+
+          mask-image:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">  <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="12"/></filter>  <rect width="100%" height="100%" filter="url(%23n)"/></svg>'),
+    radial-gradient(circle at 20% 22%, #000 0 10%, transparent 24%),
+    radial-gradient(ellipse 30% 20% at 68% 18%, #000 0 12%, transparent 28%),
+    radial-gradient(circle at 76% 64%, #000 0 9%, transparent 22%),
+    radial-gradient(ellipse 22% 28% at 32% 72%, #000 0 11%, transparent 26%),
+    radial-gradient(circle at 12% 42%, #000 0 5%, transparent 14%),
+    radial-gradient(circle at 48% 28%, #000 0 4%, transparent 12%),
+    radial-gradient(circle at 58% 82%, #000 0 5%, transparent 14%),
+    radial-gradient(circle at 84% 42%, #000 0 6%, transparent 15%);
+
+  -webkit-mask-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat,
+                       no-repeat, no-repeat, no-repeat, no-repeat;
+          mask-repeat:  repeat, no-repeat, no-repeat, no-repeat, no-repeat,
+                       no-repeat, no-repeat, no-repeat, no-repeat;
+
+  -webkit-mask-size: 280px 280px, 100% 100%, 100% 100%, 100% 100%, 
+                     100% 100%, 100% 100%, 100% 100%, 100% 100%;
+          mask-size:  280px 280px, 100% 100%, 100% 100%, 100% 100%, 
+                     100% 100%, 100% 100%, 100% 100%, 100% 100%;
+
+  /* softer, wet edges */
+  filter: blur(.35px) contrast(1.02);
+}
+
+/* === Global mold overlay for all internal pages (no duplication with .fx--mold) === */
+.flipbook .page:not(.hard)::before{
+  content:"";
+  position:absolute; inset:0; pointer-events:none; z-index:1;
+  background: url("mold-specks.png") center/cover no-repeat;
+  mix-blend-mode:multiply;
+  opacity:.42;
+}
+
+/* If legacy inline overlay <i class="fx fx--mold"> is present, hide it to avoid double-darkening */
+.flipbook .page .fx--mold{ display:none !important; }
+
+
+
+/* REQUIRED: base overlay box */
+.flipbook .page:not(.hard){ position:relative; isolation:isolate; }
+
+.fx{
+  position:absolute;
+  top:0; right:0; bottom:0; left:0;   /* use explicit edges for full support */
+  display:block;
+  pointer-events:none;
+  z-index:6;                          /* above paper fiber ::after */
+  mix-blend-mode:multiply;
+}
+
+/* === Stabilize Turn.js page box to prevent shrink/slide artifacts === */
+.flipbook .page{
+  width: var(--page-w) !important;
+  height: var(--page-h) !important;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+
+/* woodlouse layer & sprite */
+.woodlouse-layer{
+  position:absolute;
+  inset:0;              /* fill the page/cover */
+  pointer-events:none;
+  overflow:hidden;
+  z-index: 9;           /* above page content and cover overlays */
+}
+
+.woodlouse{
+  position:absolute;
+  width:46px; height:46px;
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter: brightness(.88) contrast(.95) saturate(.9) drop-shadow(0 1px 1px rgba(0,0,0,.35));
+  opacity:.97;
+  will-change: transform, opacity, background-image;
+  transform-origin:50% 50%;
+}
+.woodlouse--despawn{ opacity:0; transition:opacity .2s ease; }
+
+/* === Global body text bump (slight, consistent across the flipbook) === */
+:root{
+  --book-body-size: 14px;     /* tweak to 16.5px or 17px if you want a bit more */
+  --book-body-line: 1.4;     /* comfortable leading for the new size */
+}
+
+/* Main body containers */
+.flipbook .page:not(.hard) .specimen-notes,
+.flipbook .page:not(.hard) .intro-body,
+.flipbook .page:not(.hard) .conclusion .intro-body,
+.flipbook .page:not(.hard) .abs-body,
+.flipbook .page:not(.hard) .specimen1-prose,
+.flipbook .page:not(.hard) .taxonomy-grid {        /* affects dd text */
+  font-size: var(--book-body-size) !important;
+  line-height: var(--book-body-line) !important;
+}
+
+/* Ensure inner elements inherit the new size */
+.flipbook .page:not(.hard) .specimen-notes p,
+.flipbook .page:not(.hard) .intro-body p,
+.flipbook .page:not(.hard) .conclusion .intro-body p,
+.flipbook .page:not(.hard) .abs-body p,
+.flipbook .page:not(.hard) .specimen1-prose p,
+.flipbook .page:not(.hard) .intro-list li,
+.flipbook .page:not(.hard) .taxonomy-grid dd {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+/* Optional: keep “Keywords” line visually aligned with the new size */
+.flipbook .page:not(.hard) .abs-keys{
+  font-size: var(--book-body-size) !important;
+  line-height: var(--book-body-line) !important;
+}
+
+
+/* ===== SPINE-ONLY (tiny) — final, minimal, working ===== */
+
+/* 1) Keep mold on ::before (no side stripes anywhere) */
+body .book-wrap .flipbook .page:not(.hard)::before{
+  content:"";
+  position:absolute; inset:0;
+  z-index:1; pointer-events:none; mix-blend-mode:multiply;
+  background: url("mold-specks.png") center/cover no-repeat !important;
+  left:auto !important; right:auto !important; width:auto !important;
+}
+
+/* 2) Base paper fiber on ::after (no gutters by default) */
+body .book-wrap .flipbook .page:not(.hard)::after{
+  content:"";
+  position:absolute; inset:0;
+  z-index:2; pointer-events:none; mix-blend-mode:multiply;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.02)),
+    url("paper-fiber.png") !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-position: center, center !important;
+}
+
+/* 3) LEFT page (even) → draw a tiny spine shadow on its RIGHT edge only */
+body .book-wrap .flipbook .page:not(.hard).even::after{
+  background:
+    /* 1px hairline right at the spine */
+    linear-gradient(to left, rgba(0,0,0,.18), rgba(0,0,0,0) 100%) right center / 1px 100% no-repeat,
+    /* soft 4px fade inside the spine */
+    linear-gradient(to left, rgba(0,0,0,.10), rgba(0,0,0,0) 60%) right center / 4px 100% no-repeat,
+    /* keep the base fiber layers */
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.02)),
+    url("paper-fiber.png") !important;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat !important;
+  background-size: 1px 100%, 4px 100%, cover, cover !important;
+  background-position: right center, right center, center, center !important;
+}
+
+/* 4) RIGHT page (odd) → ensure ZERO inner shadow (fiber only) */
+body .book-wrap .flipbook .page:not(.hard).odd::after{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.02)),
+    url("paper-fiber.png") !important;
+}
+
+/* 5) Guard: if any earlier rules put a side shadow on ::before for even/odd, neutralize them */
+body .book-wrap .flipbook .page:not(.hard).even::before,
+body .book-wrap .flipbook .page:not(.hard).odd::before{
+  left:auto !important; right:auto !important; width:auto !important;
+  background: url("mold-specks.png") center/cover no-repeat !important;
+}
+
+/* Bigger left-page hero (still contained above the footer row) */
+.specimen-left{
+  display: grid;
+  grid-template-rows: 10% 55% auto;  /* title | hero | footer */
+}
+
+.specimen-left .specimen-hero{
+  min-height: 0;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Make the image larger */
+.specimen-left .specimen-hero-img{
+  width: 90%;          /* try 98–100% for desired size */
+  max-height: 100%;    /* stays within the middle row */
+  object-fit: contain;
+}
+
+/* === Taxonomy table: 14px titles + tighter spacing === */
+.taxonomy-grid{
+  font-size: 14px;          /* base for values */
+  line-height: 1.28;        /* tighter line spacing */
+}
+
+.taxonomy-grid dt{
+  font-size: 14px !important;      /* titles at 14px */
+  letter-spacing: .06em;           /* slightly reduced tracking */
+  line-height: 1.25;               /* compact label lines */
+}
+
+.taxonomy-grid dd{
+  font-size: 14px;                 /* match titles */
+  line-height: 1.28;               /* compact value lines */
+}
+
+/* tighten paragraph spacing inside values */
+.taxonomy-grid dd p{
+  margin: 0.25rem 0 !important;    /* less space between paragraphs */
+}
+
+/* reduce vertical padding per row */
+.taxonomy-grid .row{
+  padding: 4px 0;                  /* was 6–8px */
+  gap: 8px;                        /* keep columns readable */
+}
+
+/* keep last row clean */
+.taxonomy-grid .row:last-child{ border-bottom: none; }
+
+
+/* === Mini taxonomy card for intro/abstract bullets === */
+.taxonomy--mini{
+  border: 2px dashed rgba(109,88,62,.62);
+  border-radius: 9px;
+  padding: 8px 10px;
+  transform: rotate(-.2deg);
+  background: transparent;
+  margin-top: .6rem;
+}
+
+.taxonomy-mini{
+  /* compact type */
+  font-size: 13px;
+  line-height: 1.28;
+  /* make the items flow into two columns on large pages */
+  column-count: 2;
+  column-gap: 14px;
+}
+
+.taxonomy-mini .row{
+  break-inside: avoid;
+  display: grid;
+  grid-template-columns: 20px 1fr; /* icon | text */
+  align-items: start;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.taxonomy-mini .label{
+  display: inline-block;
+  font-family:"Oswald", system-ui, sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size: 13px;
+  color:#323634;
+}
+
+.taxonomy-mini .desc{
+  display:block;
+  font-family:"IBM Plex Serif", serif;
+  color:#292521;
+}
+
+.taxonomy-mini .ico{
+  width:16px; height:16px;
+  stroke:#323634; stroke-width:1.6;
+  fill:none;
+}
+
+/* Stack to one column on small screens */
+@media (max-width:900px){
+  .taxonomy-mini{ column-count: 1; }
+}
+
+/* === Fit taxonomy tighter for Specimen #1 === */
+.tax-fit{
+  --tax-fs: clamp(11px, 1.1vw, 12.5px);   /* smaller font */
+  --tax-label-w: 92px;                    /* narrower label column */
+  --tax-gap: 5px;                         /* smaller gap */
+  --tax-row-pad: 1px;                     /* thinner row padding */
+
+  font-size: var(--tax-fs);
+  line-height: 1.18;
+  /* max-height: 36%;                        cap height lower */
+  overflow: hidden;
+  padding: 5px 7px;                       /* tighter card padding */
+}
+
+.tax-fit .taxonomy-grid{
+  font-size: var(--tax-fs);
+  line-height: 1.15;
+}
+
+.tax-fit .taxonomy-grid .row{
+  grid-template-columns: var(--tax-label-w) 1fr;
+  gap: var(--tax-gap);
+  padding: var(--tax-row-pad) 0;
+  border-bottom: 1px dashed rgba(109,88,62,.28);
+}
+.tax-fit .taxonomy-grid .row:last-child{ border-bottom: none; }
+
+.tax-fit dt{
+  font-size: calc(var(--tax-fs) - 0.5px);
+  letter-spacing: .04em;
+  line-height: 1.12;
+}
+.tax-fit dd{
+  font-size: var(--tax-fs);
+  line-height: 1.15;
+}
+.tax-fit dd p{ margin: .1rem 0 !important; } /* ultra-tight */
+
+
+/* ENABLE HTML mold overlay (above the paper fiber) */
+.flipbook .page .fx--mold{
+  display:block !important;
+  position:absolute; inset:0;
+  background: url("mold-specks.png") center/cover no-repeat;
+  mix-blend-mode:multiply;
+  opacity:.42;            /* tweak .35–.55 if needed */
+  z-index:7;              /* above ::after fiber (z=2) */
+  pointer-events:none;
+}
+
+/* (optional) avoid double-darkening if you keep using the HTML overlay */
+.flipbook .page:not(.hard)::before{ content:none !important; }
+
+/* Center the image on the abstract page's right column */
+.abs-side-figure{
+  align-self: center;      /* vertical centering in the grid cell */
+  justify-self: center;    /* horizontal centering in the grid cell */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.abs-side-img{
+  margin: 0 auto;          /* safety: keeps it centered if width < 100% */
+  max-height: 78%;
+}
+
+/* shift abstract image left so it isn't cropped */
+.abs-side-figure{
+  display:flex;
+  justify-content:flex-start;   /* anchor to the left of its column */
+  overflow:visible;             /* allow overhang after rotation */
+}
+
+.abs-side-img.abs-rot{
+  width:auto;
+  height:100%;
+  transform-origin:center;
+  transform: translateX(-10%) rotate(-30deg) scale(1.4); /* tweak -10% / 1.2 */
+}
+
+.specimen-notes .abs-bullets{
+  list-style: disc;
+  font-family: "IBM Plex Serif", serif;
+  font-size: 14px;
+  margin: .45rem 0 0 1.2rem;
+  padding-left: .2rem;
+}
+.specimen-notes .abs-bullets li{ margin: .3rem 0; }
+.specimen-notes .abs-bullets .label{
+  font-family: "Oswald", system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: 14px;
+  color:#1f1f1f;
+}
+
+/* Intro: leave room on the right and drop art there */
+.intro-notes{ position:relative; }
+
+/* reserve a wider right column for the image */
+.intro-notes .narrow-right{
+  margin-right: clamp(220px, 40%, 300px);   /* was 180px,34%,260px */
+}
+
+/* image uses the same width as the reserved slot */
+.intro-notes .intro-art{
+  position:absolute;
+  right:14px;              /* was 18px, nudge a bit tighter to edge */
+  bottom:16px;
+  width: clamp(220px, 40%, 300px);  /* match the margin-right above */
+  max-height:52%;          /* optional: a touch taller */
+  object-fit:contain;
+  z-index:2;
+  pointer-events:none;
+}
+
+@media (max-width:900px){
+  .intro-notes .narrow-right{ margin-right:0; }
+  .intro-notes .intro-art{ position:static; width:60%; max-height:none; margin:.6rem auto 0; }
+}
+
+
+/* ==== Ultra-compact taxonomy (near single-line spacing) ==== */
+.taxonomy-tag.taxonomy--compact.tax-tight{
+  /* small global shrink; adjust if needed */
+  transform: scale(.97) rotate(-.1deg);
+  transform-origin: left bottom;
+  border-width: 1px !important;
+  border-radius: 7px !important;
+  padding: 6px 8px !important;
+}
+
+.taxonomy-tag.taxonomy--compact.tax-tight .taxonomy-grid{
+  font-size: 13px !important;      /* values */
+  line-height: 1.05 !important;       /* ~single-line */
+}
+
+.taxonomy-tag.taxonomy--compact.tax-tight .taxonomy-grid .row{
+  grid-template-columns: 100px 1fr !important;  /* narrower label col */
+  gap: 6px !important;
+  padding: 2px 0 !important;                    /* very tight rows */
+  border-bottom: 1px dashed rgba(109,88,62,.28) !important;
+}
+.taxonomy-tag.taxonomy--compact.tax-tight .taxonomy-grid .row:last-child{
+  border-bottom: none !important;
+}
+
+.taxonomy-tag.taxonomy--compact.tax-tight .taxonomy-grid dt{
+  font-size: 13px !important;
+  letter-spacing: .04em !important;
+  line-height: 1.05 !important;
+}
+
+.taxonomy-tag.taxonomy--compact.tax-tight .taxonomy-grid dd{
+  font-size: 13px !important;
+  line-height: 1.05 !important;
+}
+.taxonomy-tag.taxonomy--compact.tax-tight .taxonomy-grid dd p{
+  margin: .15rem 0 !important;       /* minimal paragraph spacing */
+}
+
+/* AUTHORS page — clean layout, centered vertically, nudged right & up */
+.authors-page .conteudo{
+  display: grid;                      /* header | art | footer */
+  grid-template-rows: auto 1fr auto;
+  padding-top: 10px;
+  padding-bottom: 24px;
+}
+
+.authors-page .specimen-head{ 
+  margin-bottom: 4px;                 /* tighter header */
+}
+
+.authors-page .specimen-hero{
+  margin: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center end;            /* center vertically, align right */
+}
+
+.authors-page .specimen-hero-img{
+  max-width: min(90%, 540px);
+  max-height: 90%;
+  width: auto; 
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  margin: 0;
+  transform: translate(10%, -7%);     /* → move right 10%, ↑ move up 7% */
+}
+
+/* Small screens: recentre and remove nudge */
+@media (max-width: 900px){
+  .authors-page .specimen-hero{ place-items: center; }
+  .authors-page .specimen-hero-img{ transform: none; max-width: 92%; }
+}
+
+/* ==== FIX: Stable taxonomy on LEFT page only (no HTML edits) ==== */
+
+/* 0) If you previously added a global :has(...) grid rule, neutralize it for RIGHT pages */
+.specimen-right:has(.taxonomy-tag){
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* 1) Left page becomes a 4-row grid ONLY when a taxonomy is present */
+.specimen-left:has(.taxonomy-tag){
+  display: grid !important;                     /* override the flex utility */
+  grid-template-rows: 10% 55% auto;  /* head | hero | taxonomy | footer */
+  row-gap: 8px;
+}
+
+/* 2) Pin elements to their rows and keep hero flexible */
+.specimen-left:has(.taxonomy-tag) .specimen-head{ grid-row: 1; }
+.specimen-left:has(.taxonomy-tag) .specimen-hero{ grid-row: 2; min-height: 0; }
+.specimen-left:has(.taxonomy-tag) .doc-by{ grid-row: 4; margin-top: 0; }
+
+/* 3) Taxonomy: fixed row, compact typography, capped height so it never clips */
+.specimen-left:has(.taxonomy-tag) .taxonomy-tag{
+  grid-row: 3;
+  align-self: end;
+  /* max-height: 32%;                      <= tweak to 30–34% if needed */
+  overflow: hidden;
+
+  /* compact card */
+  font-size: 12.5px;
+  line-height: 1.18;
+  padding: 6px 8px;
+  border-width: 1px;
+}
+
+/* 4) Tighter inner grid so long lines wrap cleanly */
+.specimen-left:has(.taxonomy-tag) .taxonomy-grid .row{
+  grid-template-columns: 104px 1fr;     /* label | value */
+  gap: 6px;
+  padding: 2px 0;
+  border-bottom: 1px dashed rgba(109,88,62,.28);
+}
+.specimen-left:has(.taxonomy-tag) .taxonomy-grid .row:last-child{ border-bottom:none; }
+
+.specimen-left:has(.taxonomy-tag) .taxonomy-grid dt{
+  font-size: 12px;
+  letter-spacing: .04em;
+  line-height: 1.12;
+}
+.specimen-left:has(.taxonomy-tag) .taxonomy-grid dd{
+  font-size: 12.5px;
+  line-height: 1.18;
+  word-break: break-word;               /* avoid overflow from long terms */
+  hyphens: auto;
+}
+.specimen-left:has(.taxonomy-tag) .taxonomy-grid dd p{
+  margin: .12rem 0 !important;
+}
+
+/* 5) Safety: hero image can’t steal the taxonomy’s space */
+.specimen-left:has(.taxonomy-tag) .specimen-hero-img{
+  max-height: 100%;
+  object-fit: contain;
+  transform: none;                      /* neutralize any page-specific scaling */
+}
+
+
+figure.specimen-hero > img {
+  height: 350px;
+}
